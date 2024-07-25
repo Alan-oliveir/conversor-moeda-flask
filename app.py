@@ -10,10 +10,14 @@ def obter_taxa_de_cambio(api_key, moeda_origem, moeda_destino):
         url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{moeda_origem}"
         response = requests.get(url)
         dados = response.json()
+        print(f"Resposta da API: {dados}")  # Adiciona um log da resposta da API para depuração
         if response.status_code == 200:
-            return dados['conversion_rates'].get(moeda_destino, None)
+            taxa = dados['conversion_rates'].get(moeda_destino)
+            # Adiciona um log da taxa de câmbio para depuração
+            print(f"Taxa de câmbio de {moeda_origem} para {moeda_destino}: {taxa}")
+            return taxa
         else:
-            print(f"Erro: {dados['error-type']}")
+            print(f"Erro da API: {dados['error-type']}")
             return None
     except requests.exceptions.RequestException as e:
         print(f"Erro na requisição: {e}")
@@ -51,7 +55,6 @@ def index():
                     erro = "Não foi possível obter a taxa de câmbio."
         except ValueError:
             erro = "Valor inválido. Por favor, insira um número."
-
     return render_template('index.html', resultado=resultado, erro=erro)
 
 
