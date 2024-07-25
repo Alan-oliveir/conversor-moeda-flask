@@ -39,7 +39,7 @@ def index():
             moeda_origem = request.form['moeda_origem'].upper()
             moeda_destino = request.form['moeda_destino'].upper()
             valor = float(request.form['valor'])
-            api_key = "SUA_CHAVE_API"
+            api_key = "9b75d51e36e71baa9087f7b1"
 
             if moeda_origem == "" or moeda_destino == "" or valor <= 0:
                 erro = "Por favor, insira valores válidos."
