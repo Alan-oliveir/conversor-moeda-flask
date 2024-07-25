@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -11,6 +15,7 @@ def obter_taxa_de_cambio(api_key, moeda_origem, moeda_destino):
         response = requests.get(url)
         dados = response.json()
         print(f"Resposta da API: {dados}")  # Adiciona um log da resposta da API para depuração
+
         if response.status_code == 200:
             taxa = dados['conversion_rates'].get(moeda_destino)
             # Adiciona um log da taxa de câmbio para depuração
@@ -19,6 +24,7 @@ def obter_taxa_de_cambio(api_key, moeda_origem, moeda_destino):
         else:
             print(f"Erro da API: {dados['error-type']}")
             return None
+
     except requests.exceptions.RequestException as e:
         print(f"Erro na requisição: {e}")
         return None
@@ -43,7 +49,7 @@ def index():
             moeda_origem = request.form['moeda_origem'].upper()
             moeda_destino = request.form['moeda_destino'].upper()
             valor = float(request.form['valor'])
-            api_key = "9b75d51e36e71baa9087f7b1"
+            api_key = os.getenv('API_KEY')
 
             if moeda_origem == "" or moeda_destino == "" or valor <= 0:
                 erro = "Por favor, insira valores válidos."
@@ -53,10 +59,12 @@ def index():
                     resultado = f"{valor} {moeda_origem} é igual a {valor_convertido:.2f} {moeda_destino}"
                 else:
                     erro = "Não foi possível obter a taxa de câmbio."
+
         except ValueError:
             erro = "Valor inválido. Por favor, insira um número."
+
     return render_template('index.html', resultado=resultado, erro=erro)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
